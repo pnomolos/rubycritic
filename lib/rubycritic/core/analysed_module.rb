@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'virtus'
+require 'rubycritic/core/attributes'
 require 'rubycritic/core/rating'
 
 module RubyCritic
   class AnalysedModule
-    include Virtus.model
+    include Attributes
 
     # Complexity is reduced by a factor of 25 when calculating cost
     COMPLEXITY_FACTOR = 25.0

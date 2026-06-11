@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'virtus'
+require 'rubycritic/core/attributes'
 require 'rubycritic/core/location'
 
 module RubyCritic
   class Smell
-    include Virtus.model
+    include Attributes
 
     attribute :context
     attribute :cost

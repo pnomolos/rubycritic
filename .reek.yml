@@ -113,6 +113,7 @@ detectors:
     - RubyCritic::Reporter#self.report_generator_class
     - RubyCritic::SourceLocator#deduplicate_symlinks
     - RubyCritic::Command::Compare#compare_branches
+    - RubyCritic::Attributes::ClassMethods#coerce
   FeatureEnvy:
     exclude:
     - Parser::AST::Node#module_name
@@ -163,6 +164,7 @@ detectors:
     - RubyCritic::Command::Compare#threshold_reached?
     - RubyCritic::Command::Compare#threshold_values_set?
     - RubyCritic::SourceLocator#ruby_file?
+    - RubyCritic::Attributes#default_for
   TooManyInstanceVariables:
     exclude:
     - RubyCritic::Generator::Html::CodeFile
@@ -189,6 +191,13 @@ detectors:
     exclude:
     - RubyCritic::Config#self.method_missing
     - RubyCritic::Config#self.respond_to_missing?
+    - RubyCritic::Attributes::ClassMethods#attributes
+  ModuleInitialize:
+    exclude:
+    - RubyCritic::Attributes
+  NilCheck:
+    exclude:
+    - RubyCritic::Attributes::ClassMethods#coerce
   TooManyMethods:
     exclude:
     - RubyCritic::Cli::Options::File

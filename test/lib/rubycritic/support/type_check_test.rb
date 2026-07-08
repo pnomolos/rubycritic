@@ -3,21 +3,22 @@
 require 'test_helper'
 require 'rubycritic/core/smell'
 require 'rubycritic/core/analysed_module'
+require 'bigdecimal'
 
 describe 'TypeCheck' do
   describe RubyCritic::Smell do
-    it 'allows a value of the declared type' do
-      smell = RubyCritic::Smell.new
-      smell.cost = 42
+    # Numeric.subclasses includes `Date::Infinity` and `Complex` which don't make
+    # sense to be assigned to `cost`.  We are accepting this as a possibility to
+    # avoid bikeshedding the micro type system to support more complex typing
+    %i[Integer BigDecimal Float].each do |numeric_type|
+      it "allows a numeric subclass of the declared type (#{numeric_type})" do
+        smell = RubyCritic::Smell.new
+        smell.score = Kernel.send(numeric_type, 42)
 
-      _(smell.cost).must_equal 42
-    end
-
-    it 'allows a subclass of the declared type (Integer for Numeric)' do
-      smell = RubyCritic::Smell.new
-      smell.score = 3
-
-      _(smell.score).must_equal 3
+        _(smell.score).must_equal Kernel.send(numeric_type, 42)
+        _(smell.score).must_be_kind_of Numeric
+        _(smell.score).must_be_kind_of Kernel.send(numeric_type, 0).class
+      end
     end
 
     it 'allows nil for any attribute' do
@@ -69,18 +70,16 @@ describe 'TypeCheck' do
   end
 
   describe RubyCritic::AnalysedModule do
-    it 'allows an Integer for a Numeric attribute (coverage)' do
-      mod = RubyCritic::AnalysedModule.new
-      mod.coverage = 0
+    # Ref similar test above for RubyCritic::Smell
+    %i[Integer BigDecimal Float].each do |numeric_type|
+      it "allows a numeric subclass of the declared type (#{numeric_type})" do
+        mod = RubyCritic::AnalysedModule.new
+        mod.coverage = Kernel.send(numeric_type, 42.5)
 
-      _(mod.coverage).must_equal 0
-    end
-
-    it 'allows a Float for a Numeric attribute (coverage)' do
-      mod = RubyCritic::AnalysedModule.new
-      mod.coverage = 87.5
-
-      _(mod.coverage).must_equal 87.5
+        _(mod.coverage).must_equal Kernel.send(numeric_type, 42.5)
+        _(mod.coverage).must_be_kind_of Numeric
+        _(mod.coverage).must_be_kind_of Kernel.send(numeric_type, 0).class
+      end
     end
 
     it 'preserves the Float::INFINITY default' do

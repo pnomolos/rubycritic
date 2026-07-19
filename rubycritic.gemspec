@@ -59,7 +59,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'mocha', '~> 3.1.0'
   spec.add_development_dependency 'ostruct'
   spec.add_development_dependency 'rake', '~> 13.4.2', '>= 11.0.0'
-  spec.add_development_dependency 'rdoc'
+  # rdoc 8 depends on rbs, whose C extension can't build on JRuby
+  if RUBY_PLATFORM == 'java'
+    spec.add_development_dependency 'rdoc', '< 8.0'
+  else
+    spec.add_development_dependency 'rdoc'
+  end
   spec.add_development_dependency 'rexml', '>= 3.2.0'
   spec.add_development_dependency 'rubocop', '>= 1.72.0', '< 2.0'
   spec.add_development_dependency 'rubocop-minitest'

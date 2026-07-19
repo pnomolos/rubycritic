@@ -73,10 +73,13 @@ describe 'TypeCheck' do
     # Ref similar test above for RubyCritic::Smell
     %i[Integer BigDecimal Float].each do |numeric_type|
       it "allows a numeric subclass of the declared type (#{numeric_type})" do
+        # BigDecimal() requires an explicit precision when given a Float; JRuby
+        # enforces this (CRuby is lenient), so build the value portably.
+        value = numeric_type == :BigDecimal ? BigDecimal(42.5, Float::DIG) : Kernel.send(numeric_type, 42.5)
         mod = RubyCritic::AnalysedModule.new
-        mod.coverage = Kernel.send(numeric_type, 42.5)
+        mod.coverage = value
 
-        _(mod.coverage).must_equal Kernel.send(numeric_type, 42.5)
+        _(mod.coverage).must_equal value
         _(mod.coverage).must_be_kind_of Numeric
         _(mod.coverage).must_be_kind_of Kernel.send(numeric_type, 0).class
       end
